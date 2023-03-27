@@ -6,11 +6,7 @@ import com.kaoyan.commonUtils.Res;
 import com.kaoyan.institutions.entity.Kaoyandata;
 import com.kaoyan.institutions.service.KaoyandataService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,7 +19,7 @@ import java.util.List;
  * @since 2022-12-19
  */
 @RestController
-@RequestMapping("/institutions/kaoyandata")
+@RequestMapping("/api/institutions/kaoyandata")
 public class KaoyandataController {
 
     @Autowired

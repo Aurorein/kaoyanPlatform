@@ -6,6 +6,7 @@ import com.kaoyan.commonUtils.Res;
 import com.kaoyan.institutions.entity.Dzxx;
 import com.kaoyan.institutions.service.DzxxService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 

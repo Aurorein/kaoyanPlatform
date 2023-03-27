@@ -10,6 +10,7 @@ import com.kaoyan.commonUtils.Res;
 import com.kaoyan.institutions.entity.Schools;
 import com.kaoyan.institutions.service.SchoolsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -26,6 +27,7 @@ import java.util.List;
  * @since 2023-01-02
  */
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/institutions/schools")
 public class SchoolsController {
 

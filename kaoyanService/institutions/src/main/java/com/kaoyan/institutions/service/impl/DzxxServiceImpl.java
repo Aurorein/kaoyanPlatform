@@ -4,7 +4,10 @@ import com.kaoyan.institutions.entity.Dzxx;
 import com.kaoyan.institutions.mapper.DzxxMapper;
 import com.kaoyan.institutions.service.DzxxService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -16,5 +19,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class DzxxServiceImpl extends ServiceImpl<DzxxMapper, Dzxx> implements DzxxService {
+    @Autowired
+    DzxxMapper dzxxMapper;
 
+    @Override
+    public List<Dzxx> selectByLikeMajor(String major) {
+        return dzxxMapper.selectByLikeMajor(major);
+    }
 }

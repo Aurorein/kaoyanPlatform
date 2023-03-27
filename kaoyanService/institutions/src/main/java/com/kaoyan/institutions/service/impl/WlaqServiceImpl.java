@@ -4,7 +4,10 @@ import com.kaoyan.institutions.entity.Wlaq;
 import com.kaoyan.institutions.mapper.WlaqMapper;
 import com.kaoyan.institutions.service.WlaqService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -16,5 +19,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class WlaqServiceImpl extends ServiceImpl<WlaqMapper, Wlaq> implements WlaqService {
+    @Autowired
+    WlaqMapper wlaqMapper;
 
+    @Override
+    public List<Wlaq> selectByLikeMajor(String major) {
+        return wlaqMapper.selectByLikeMajor(major);
+    }
 }

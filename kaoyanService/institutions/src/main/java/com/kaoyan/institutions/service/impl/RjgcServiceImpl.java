@@ -4,7 +4,10 @@ import com.kaoyan.institutions.entity.Rjgc;
 import com.kaoyan.institutions.mapper.RjgcMapper;
 import com.kaoyan.institutions.service.RjgcService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -16,5 +19,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class RjgcServiceImpl extends ServiceImpl<RjgcMapper, Rjgc> implements RjgcService {
+    @Autowired
+    RjgcMapper rjgcMapper;
 
+
+    @Override
+    public List<Rjgc> selectByLikeSearch(String major) {
+        return rjgcMapper.selectByLikeMajor(major);
+    }
 }

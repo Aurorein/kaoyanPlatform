@@ -1,8 +1,11 @@
 package com.kaoyan.institutions.mapper;
 
+import com.kaoyan.institutions.entity.Kaoyandata;
 import com.kaoyan.institutions.entity.Wlaq;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,5 +17,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface WlaqMapper extends BaseMapper<Wlaq> {
+    List<Wlaq> selectByLikeMajor(String major);
+
 
 }

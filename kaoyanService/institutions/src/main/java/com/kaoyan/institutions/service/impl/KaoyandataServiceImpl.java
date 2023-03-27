@@ -4,7 +4,10 @@ import com.kaoyan.institutions.entity.Kaoyandata;
 import com.kaoyan.institutions.mapper.KaoyandataMapper;
 import com.kaoyan.institutions.service.KaoyandataService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -16,5 +19,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class KaoyandataServiceImpl extends ServiceImpl<KaoyandataMapper, Kaoyandata> implements KaoyandataService {
+    @Autowired
+    KaoyandataMapper kaoyandataMapper;
 
+    @Override
+    public List<Kaoyandata> SelectByLikeMajor(String major) {
+        return kaoyandataMapper.selectByLikeMajor(major);
+    }
 }

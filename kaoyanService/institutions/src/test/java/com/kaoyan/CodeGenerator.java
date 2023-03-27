@@ -43,10 +43,10 @@ public class CodeGenerator {
 
         // 3������Դ����
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://47.104.158.201:3306/kaoyandata?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true");
+        dsc.setUrl("jdbc:mysql://101.43.219.115:3306/kaoyandata?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
-        dsc.setUsername("admin");
-        dsc.setPassword("Qwe123123,");
+        dsc.setUsername("cxn");
+        dsc.setPassword("2001101025Cxn!");
         dsc.setDbType(DbType.MYSQL);
         mpg.setDataSource(dsc);
 

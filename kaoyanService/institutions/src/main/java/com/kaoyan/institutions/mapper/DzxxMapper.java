@@ -2,7 +2,10 @@ package com.kaoyan.institutions.mapper;
 
 import com.kaoyan.institutions.entity.Dzxx;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.kaoyan.institutions.entity.Kaoyandata;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,5 +17,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface DzxxMapper extends BaseMapper<Dzxx> {
-
+    List<Dzxx> selectByLikeMajor(String major);
 }
