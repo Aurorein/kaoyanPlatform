@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,13 +19,14 @@ import lombok.EqualsAndHashCode;
  * @since 2023-03-27
  */
 @Data
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="User对象", description="")
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-      @TableId(value = "user_id", type = IdType.AUTO)
+    @TableId(value = "user_id")
     private Integer userId;
 
     private String name;

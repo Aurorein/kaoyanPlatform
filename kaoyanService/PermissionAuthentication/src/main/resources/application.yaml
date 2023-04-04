@@ -18,3 +18,5 @@ server:
 
 mybatis-plus:
   mapper-locations: classpath*:/xml/**/*.xml
+
+

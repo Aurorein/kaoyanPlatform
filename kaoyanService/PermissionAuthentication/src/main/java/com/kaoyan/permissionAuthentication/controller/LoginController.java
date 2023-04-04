@@ -6,7 +6,11 @@ import com.kaoyan.permissionauthentication.entity.SysUser;
 import com.kaoyan.permissionauthentication.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/user")
 public class LoginController {
@@ -31,7 +35,8 @@ public class LoginController {
     @PostMapping("signup")
     public Res signup(@RequestParam String username,
                       @RequestParam String password,
-                      @RequestParam int role){
+                      @RequestParam int role
+                      ){
         return loginService.signup(username,password,role);
     }
 

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author cxn
  * @since 2023-03-27
  */
-@CrossOrigin
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/community/category")
 public class CategoryController {

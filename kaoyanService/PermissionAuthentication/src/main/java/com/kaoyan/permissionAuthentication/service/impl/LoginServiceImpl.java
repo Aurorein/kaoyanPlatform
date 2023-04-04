@@ -2,14 +2,18 @@ package com.kaoyan.permissionauthentication.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.kaoyan.commonUtils.Res;
+
+
 import com.kaoyan.permissionauthentication.domain.LoginUser;
 import com.kaoyan.permissionauthentication.entity.SysUser;
 import com.kaoyan.permissionauthentication.entity.SysUserRoleRelation;
+import com.kaoyan.permissionauthentication.feign.TopicClient;
 import com.kaoyan.permissionauthentication.service.LoginService;
 import com.kaoyan.permissionauthentication.service.SysUserRoleRelationService;
 import com.kaoyan.permissionauthentication.service.SysUserService;
 import com.kaoyan.permissionauthentication.utils.JwtUtil;
 import com.kaoyan.permissionauthentication.utils.RedisCache;
+
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,8 +22,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -39,6 +48,8 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     SysUserRoleRelationService sysUserRoleRelationService;
 
+    @Autowired
+    TopicClient userClient;
     @Override
     public Res login(SysUser user) {
         // AuthenticationManager authenticate进行用户认证
@@ -93,9 +104,9 @@ public class LoginServiceImpl implements LoginService {
      * @return
      */
     @Override
-    public Res signup(String username,String password,int role) {
-        if(role > 3 || role < 1){
-            return Res.error().data("msg","role值错误！");
+    public Res signup(String username, String password, int role) {
+        if (role > 3 || role < 1) {
+            return Res.error().data("msg", "role值错误！");
         }
         String passwordProcessed = passwordEncoder.encode(password);
         SysUser user = new SysUser();
@@ -108,10 +119,23 @@ public class LoginServiceImpl implements LoginService {
         sysUserRoleRelation.setUserId(sysUserService.getOne(queryWrapper).getId());
         sysUserRoleRelation.setRoleId(role);
         boolean isSave = sysUserRoleRelationService.save(sysUserRoleRelation);
-        if(isSave){
-            return Res.ok().data("msg",username+"注册成功！");
-        }else{
-            return Res.ok().data("msg","注册失败！");
+        if (!isSave) {
+            return Res.error().data("msg", username + "注册失败！");
         }
+        QueryWrapper<SysUser> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("user_name", username);
+        SysUser sysUser = sysUserService.getOne(queryWrapper1);
+        Integer userId = sysUser.getId();
+        System.out.println("====="+userId);
+//        List list = new ArrayList<>();
+//        list.add(userId);
+//        list.add(avatar);
+//        list.add(username);
+
+        Res res = userClient.InsertUserTest(userId,username);
+//        Res res = Res.ok().data("userID",userId).data("username",username);
+        return res;
     }
+
+
 }

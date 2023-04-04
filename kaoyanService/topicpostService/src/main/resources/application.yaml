@@ -6,6 +6,12 @@ spring:
     password: 2001101025Cxn!
   application:
     name: topicpost-service
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+
 
 server:
   port: 8661
+
+
