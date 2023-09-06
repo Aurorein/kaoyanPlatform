@@ -13,9 +13,9 @@
     <packaging>pom</packaging>
     <modules>
         <module>institutions</module>
-        <module>permissionAuthentication</module>
+        <module>userModule</module>
         <module>gatewayModule</module>
-        <module>topicpostService</module>
+        <module>kaoyanForum</module>
     </modules>
 
     <properties>

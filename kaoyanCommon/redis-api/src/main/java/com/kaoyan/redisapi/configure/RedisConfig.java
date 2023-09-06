@@ -1,22 +1,32 @@
-package com.kaoyan.gateway.config;
+package com.kaoyan.redisapi.configure;
 
-import com.kaoyan.redisapi.configure.FastJsonRedisSerializer;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-
+/**
+ * redis配置
+ * 
+ * @author ruoyi
+ */
 @Configuration
-public class RedisConfig {
-
+@EnableCaching
+@AutoConfigureBefore(RedisAutoConfiguration.class)
+public class RedisConfig extends CachingConfigurerSupport
+{
     @Bean
     @SuppressWarnings(value = { "unchecked", "rawtypes" })
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory)
     {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
+
 
         FastJsonRedisSerializer serializer = new FastJsonRedisSerializer(Object.class);
 

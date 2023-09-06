@@ -1,17 +1,21 @@
-package com.kaoyan.gateway;
+package com.kaoyan.permissionauthentication;
+
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
 
-@SpringBootApplication
-@EnableFeignClients
-public class GatewayApplication {
 
+
+@SpringBootApplication
+@EnableDiscoveryClient
+@EnableFeignClients
+public class PermissionAuthenticationApplication {
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext context = SpringApplication.run(GatewayApplication.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(PermissionAuthenticationApplication.class, args);
     }
 
 }

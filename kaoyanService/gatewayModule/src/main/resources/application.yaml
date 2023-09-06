@@ -15,11 +15,10 @@ spring:
     gateway:
       routes:
         - id: school-server
-          uri: lb://institutions
+#          uri: lb://institutions
+          uri: http://localhost:8001
           predicates:
-            - Path=/gateway/institutions/**
-          filters:
-            - name: JwtCustomFilter
+            - Path=/api/institutions/**
         - id: authen-server
           uri: lb://authen-service
           predicates:
