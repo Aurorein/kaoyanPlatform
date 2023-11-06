@@ -13,13 +13,16 @@ import java.util.Map;
 public class JwtUtil {
     private static final String SING = "ldjfklajsfjas";
 
-    public static String tokenProduces(String userId) {
+    public static String tokenProduces(String userId, String userName, String signature, String email,String phone) {
         Map<String, Object> map = new HashMap<>();
         Calendar instance = Calendar.getInstance();
         instance.add(Calendar.DATE,7);
         String token = JWT.create().withHeader(map)    //生成token的header这一部分为令牌类型和所使用得签名算法，这个是默认的，可以不写
                 .withClaim("userId", userId) //生成token的payload部分，通常是放一些用户信息进去，如id，名字，权限等，千万不要放密码
-                .withClaim("username", "Aurorain")
+                .withClaim("username", userName)
+                .withClaim("signature", signature)
+                .withClaim("email", email)
+                .withClaim("phone", phone)
                 .withExpiresAt(instance.getTime())   //设token的过期时间
                 .sign(Algorithm.HMAC256("ksjfkjsakfjkajk"));  //签名的算法及密钥，这里面的一串字符串是不能泄露的
 

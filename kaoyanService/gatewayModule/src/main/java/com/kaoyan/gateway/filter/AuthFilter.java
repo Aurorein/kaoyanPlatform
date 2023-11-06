@@ -6,28 +6,25 @@ import com.kaoyan.commonUtils.StringUtils;
 
 import com.kaoyan.commonUtils.WebUtils;
 import com.kaoyan.commonUtils.constant.CacheConstants;
-import com.kaoyan.commonUtils.constant.SecurityConstants;
 import com.kaoyan.commonUtils.constant.TokenConstants;
 
 import com.kaoyan.gateway.config.IgnoreWhiteProperties;
-import com.kaoyan.gateway.entity.User;
-import com.kaoyan.gateway.feign.RemoteUserService;
-import io.jsonwebtoken.Claims;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
-import org.springframework.data.redis.core.BoundValueOperations;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.Objects;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -35,10 +32,11 @@ import java.util.Objects;
  * 
  * @author ruoyi
  */
+@Slf4j
 @Component
+@AllArgsConstructor
 public class AuthFilter implements GlobalFilter, Ordered
 {
-    private static final Logger log = LoggerFactory.getLogger(AuthFilter.class);
 
     // 排除过滤的 uri 地址，nacos自行添加
     @Autowired
@@ -58,40 +56,43 @@ public class AuthFilter implements GlobalFilter, Ordered
         ServerHttpRequest.Builder mutate = request.mutate();
 
         String url = request.getURI().getPath();
+
+        log.info("[网关认证服务]请求url:{}",url);
         // 跳过不需要验证的路径
         if (StringUtils.matches(url, ignoreWhite.getWhites()))
         {
             return chain.filter(exchange);
         }
+
+
         HttpHeaders headers = request.getHeaders();
-        String token = headers.getFirst("token");
+        String token = headers.getFirst("token").trim();
 
-
-        String userId;
         try {
             JwtUtil.verify(token);
             DecodedJWT tokenInfo = JwtUtil.getTokenInfo(token);
-            userId = tokenInfo.getClaim("userId").asString();
+
+            addHeader(mutate, "userId", tokenInfo.getClaim("userId").asString());
+            addHeader(mutate, "userName", tokenInfo.getClaim("userName").asString());
+            addHeader(mutate, "signature", tokenInfo.getClaim("signature").asString());
+            addHeader(mutate, "email", tokenInfo.getClaim("email").asString());
+            addHeader(mutate, "phone", tokenInfo.getClaim("phone").asString());
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("token非法");
+            return errorResponse(exchange, "token认证失败！");
         }
-        //从redis中获取用户信息
-        String redisKey = "login:" + userId;
-        BoundValueOperations boundValueOperations = redisTemplate.boundValueOps(redisKey);
+        //从redis中获取用户信息(不使用，而是改成redis存储权限信息，用户信息放在token里面）
+//        String redisKey = "login:" + userId;
+//        BoundValueOperations boundValueOperations = redisTemplate.boundValueOps(redisKey);
+//
+//        if(Objects.isNull(boundValueOperations)){
+//            throw new RuntimeException("用户未登录");
+//        }
 
-        if(Objects.isNull(boundValueOperations)){
-            throw new RuntimeException("用户未登录");
-        }
-
-        User loginUser = (User)boundValueOperations.get();
+//        User loginUser = (User)boundValueOperations.get();
 //        HashMap<String,Object> userInfo = redisCache.getCacheObject(redisKey);
 
-
-
-//        User loginuser = (User) userInfo.get("loginuser");
-        remoteUserService.setUser(loginUser);
         return chain.filter(exchange.mutate().request(mutate.build()).build());
     }
 
@@ -109,12 +110,6 @@ public class AuthFilter implements GlobalFilter, Ordered
     private void removeHeader(ServerHttpRequest.Builder mutate, String name)
     {
         mutate.headers(httpHeaders -> httpHeaders.remove(name)).build();
-    }
-
-    private Mono<Void> unauthorizedResponse(ServerWebExchange exchange, String msg)
-    {
-        log.error("[鉴权异常处理]请求路径:{}", exchange.getRequest().getPath());
-                return WebUtils.webFluxResponseWriter(exchange.getResponse(), msg, 401);
     }
 
     /**
@@ -143,5 +138,14 @@ public class AuthFilter implements GlobalFilter, Ordered
     public int getOrder()
     {
         return -200;
+    }
+
+    private Mono<Void> errorResponse(ServerWebExchange exchange, String message) {
+        ServerHttpResponse response = exchange.getResponse();
+        byte[] bits = message.getBytes(StandardCharsets.UTF_8);
+        DataBuffer buffer = response.bufferFactory().wrap(bits);
+        response.getHeaders().add("Content-Type", "application/json;charset=UTF-8");
+        log.error("[鉴权异常处理]请求路径:{}", exchange.getRequest());
+        return response.writeWith(Mono.just(buffer));
     }
 }

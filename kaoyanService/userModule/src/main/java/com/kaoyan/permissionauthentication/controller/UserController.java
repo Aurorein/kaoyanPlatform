@@ -8,7 +8,6 @@ import com.kaoyan.permissionauthentication.domain.RegisterParam;
 import com.kaoyan.permissionauthentication.domain.UserRes;
 import com.kaoyan.permissionauthentication.entity.User;
 import com.kaoyan.permissionauthentication.service.UserService;
-import com.kaoyan.permissionauthentication.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +24,7 @@ import java.util.Map;
  */
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/api/user")
+@RequestMapping("/api/system/user")
 public class UserController {
     @Autowired
     UserService userService;
@@ -62,17 +61,9 @@ public class UserController {
 
     }
 
-    @GetMapping("get-id")
-    public Res getId(){
-        return Res.ok().data("userId", SecurityUtil.getUser().getUserId());
 
-    }
 
-    @GetMapping("set")
-    public Res setUser(User user){
-        SecurityUtil.setUser(user);
-        return Res.ok().message("successful set user!");
-    }
+
 
     @GetMapping("info/{userId}")
     public Res getUserInfo(@PathVariable Integer userId){

@@ -9,7 +9,8 @@ import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 
 /**
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test;
  * @author ibacon66
  * @since 2022-12-19
  */
+@SpringBootTest
 public class CodeGenerator {
 
     @Test
@@ -31,7 +33,7 @@ public class CodeGenerator {
         // 2��ȫ������
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
-        gc.setOutputDir("D:\\projects\\muti_project\\kaoyan\\kaoyanService\\permissionauthentication" + "/src/main/java");
+        gc.setOutputDir("D:\\projects\\muti_project\\kaoyan\\kaoyanService\\userModule" + "/src/main/java");
         gc.setAuthor("cxn");
         gc.setOpen(false); //���ɺ��Ƿ����Դ������
         gc.setFileOverride(false); //��������ʱ�ļ��Ƿ񸲸�
@@ -44,10 +46,10 @@ public class CodeGenerator {
 
         // 3������Դ����
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://127.0.0.1:3306/permissionauthentication?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true");
+        dsc.setUrl("jdbc:mysql://101.43.219.115:3306/user_module?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
-        dsc.setUsername("root");
-        dsc.setPassword("root");
+        dsc.setUsername("cxn");
+        dsc.setPassword("2001101025Cxn!");
         dsc.setDbType(DbType.MYSQL);
         mpg.setDataSource(dsc);
 
@@ -63,7 +65,7 @@ public class CodeGenerator {
 
         // 5����������
         StrategyConfig strategy = new StrategyConfig();
-        strategy.setInclude("sys_permission","sys_user","sys_role","sys_role_permission_relation","sys_user_role_relation");
+        strategy.setInclude("user_role","role","resource","role_resource");
         strategy.setNaming(NamingStrategy.underline_to_camel);//���ݿ��ӳ�䵽ʵ�����������
         strategy.setTablePrefix(pc.getModuleName() + "_"); //����ʵ��ʱȥ����ǰ׺
 

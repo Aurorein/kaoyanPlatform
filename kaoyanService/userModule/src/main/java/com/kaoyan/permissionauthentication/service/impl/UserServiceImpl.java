@@ -7,16 +7,17 @@ import com.kaoyan.commonUtils.JwtUtil;
 import com.kaoyan.permissionauthentication.domain.RegisterParam;
 import com.kaoyan.permissionauthentication.domain.UserRes;
 import com.kaoyan.permissionauthentication.entity.User;
+import com.kaoyan.permissionauthentication.feign.RemoteResourceService;
 import com.kaoyan.permissionauthentication.mapper.UserMapper;
 import com.kaoyan.permissionauthentication.service.UserService;
-import com.kaoyan.permissionauthentication.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.List;
 
 /**
  * <p>
@@ -29,6 +30,8 @@ import java.util.HashMap;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
+    private final static String PERMISSION_KEY = "permissions";
+
     @Autowired
     RedisTemplate redisTemplate;
 
@@ -36,6 +39,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     UserMapper userMapper;
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    RemoteResourceService remoteResourceService;
 
     @Override
     public String login(User user) {
@@ -50,20 +56,33 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(!matches){
             return "not_match";
         }
-        SecurityUtil.setUser(userAuth);
         String userId = String.valueOf(userAuth.getUserId());
+        String userName = userAuth.getUsername();
+        String signature = userAuth.getPersonalSignature();
+        String email = userAuth.getEmail();
+        String phone = userAuth.getPhone();
 
-
-        String jwt = JwtUtil.tokenProduces(userId);
-
+        // 根据用户信息生成jwt
+        String jwt = JwtUtil.tokenProduces(userId, userName, signature, email, phone);
         System.out.println("jwt:"+jwt);
 
-        HashMap<String,Object> map = new HashMap<>();
-        map.put("token",jwt);
-        map.put("loginuser",userAuth);
-//        redisCache.setCacheObject("login:"+userAuth.getUserId(),map);
-        ValueOperations<String, Object> value = redisTemplate.opsForValue();
-        value.set("login:"+userAuth.getUserId(),map);
+        // 查询当前用户可以访问的资源权限
+        List<String> userResource = (List<String>)remoteResourceService.visible(Long.parseLong(userId)).getData().get("data");
+
+        // 将用户权限放入缓存
+        if(userResource != null && userResource.size() > 0){
+
+            ValueOperations value = redisTemplate.opsForValue();
+            value.set(PERMISSION_KEY +"-" +userId, userResource);
+
+        }
+
+//        HashMap<String,Object> map = new HashMap<>();
+//        map.put("token",jwt);
+//        map.put("loginuser",userAuth);
+////        redisCache.setCacheObject("login:"+userAuth.getUserId(),map);
+//        ValueOperations<String, Object> value = redisTemplate.opsForValue();
+//        value.set("login:"+userAuth.getUserId(),map);
         return jwt;
 
     }
